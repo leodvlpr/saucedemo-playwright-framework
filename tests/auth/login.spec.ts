@@ -2,7 +2,7 @@ import { test } from '../../src/fixtures/pages.fixture';
 import { LOGIN_ERRORS, USERS } from '../../src/data/users.data';
 
 test.describe('Login', () => {
-  test('standard_user logs in successfully', async ({ loginPage, productsPage }) => {
+  test('0001 [LOGIN] Validate standard user reaches the products page after signing in', async ({ loginPage, productsPage }) => {
     await loginPage.goto();
     await loginPage.login(USERS.standard.username, USERS.standard.password);
 
@@ -10,14 +10,14 @@ test.describe('Login', () => {
     await productsPage.expectLoaded();
   });
 
-  test('locked_out_user sees an error message', async ({ loginPage }) => {
+  test('0002 [LOGIN] Validate locked out user is blocked with an error', async ({ loginPage }) => {
     await loginPage.goto();
     await loginPage.login(USERS.lockedOut.username, USERS.lockedOut.password);
 
     await loginPage.expectErrorMessage(LOGIN_ERRORS.lockedOut);
   });
 
-  test('a wrong password is rejected', async ({ loginPage }) => {
+  test('0003 [LOGIN] Validate wrong password is rejected', async ({ loginPage }) => {
     await loginPage.goto();
     await loginPage.login(USERS.standard.username, 'not-the-password');
 
@@ -25,7 +25,7 @@ test.describe('Login', () => {
     await loginPage.expectUrlToContain('saucedemo.com');
   });
 
-  test('the username is required', async ({ loginPage }) => {
+  test('0004 [LOGIN] Validate missing username is rejected', async ({ loginPage }) => {
     await loginPage.goto();
     await loginPage.login('', USERS.standard.password);
 

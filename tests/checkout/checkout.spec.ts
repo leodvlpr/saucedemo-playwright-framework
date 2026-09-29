@@ -5,7 +5,7 @@ import { CHECKOUT_ERRORS, CHECKOUT_OVERVIEW, INCOMPLETE_CUSTOMERS, VALID_CUSTOME
 test.describe('Checkout', () => {
   test.beforeEach(async ({ loggedIn }) => {});
 
-  test('completes an order end to end', async ({
+  test('0014 [CHECKOUT] Validate order completes end to end', async ({
     productsPage,
     cartPage,
     checkoutInformationPage,
@@ -26,7 +26,7 @@ test.describe('Checkout', () => {
     await checkoutCompletePage.header.expectCartCount(0);
   });
 
-  test('the overview shows payment, shipping and correct totals', async ({
+  test('0015 [CHECKOUT] Validate overview shows payment, shipping and totals', async ({
     productsPage,
     cartPage,
     checkoutInformationPage,
@@ -45,7 +45,7 @@ test.describe('Checkout', () => {
     expect(await checkoutOverviewPage.getLineItemTotal()).toBe(await checkoutOverviewPage.getSubtotal());
   });
 
-  test('step one requires the first name', async ({ cartPage, checkoutInformationPage }) => {
+  test('0016 [CHECKOUT] Validate missing first name is rejected', async ({ cartPage, checkoutInformationPage }) => {
     await cartPage.goto();
     await cartPage.checkout();
 
@@ -55,7 +55,7 @@ test.describe('Checkout', () => {
     await checkoutInformationPage.expectUrlToContain('checkout-step-one.html');
   });
 
-  test('step one requires the postal code', async ({ cartPage, checkoutInformationPage }) => {
+  test('0017 [CHECKOUT] Validate missing postal code is rejected', async ({ cartPage, checkoutInformationPage }) => {
     await cartPage.goto();
     await cartPage.checkout();
 
@@ -64,7 +64,7 @@ test.describe('Checkout', () => {
     await checkoutInformationPage.expectErrorMessage(CHECKOUT_ERRORS.postalCodeRequired);
   });
 
-  test('cancelling the overview returns to the inventory', async ({
+  test('0018 [CHECKOUT] Validate cancelling the overview returns to the products page', async ({
     productsPage,
     cartPage,
     checkoutInformationPage,

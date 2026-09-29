@@ -4,7 +4,7 @@ import { PRODUCTS } from '../../src/data/products.data';
 test.describe('Cart', () => {
   test.beforeEach(async ({ loggedIn }) => {});
 
-  test('a product added from the inventory appears in the cart', async ({ productsPage, cartPage }) => {
+  test('0010 [CART] Validate product added from the products list appears in the cart', async ({ productsPage, cartPage }) => {
     await productsPage.addToCart(PRODUCTS.backpack.name);
     await productsPage.header.expectCartCount(1);
 
@@ -14,7 +14,7 @@ test.describe('Cart', () => {
     expect(await cartPage.getQuantity(PRODUCTS.backpack.name)).toBe(1);
   });
 
-  test('the badge counts every product added', async ({ productsPage, cartPage }) => {
+  test('0011 [CART] Validate badge counts every product added', async ({ productsPage, cartPage }) => {
     const names = [PRODUCTS.backpack.name, PRODUCTS.onesie.name, PRODUCTS.boltTShirt.name];
     await productsPage.addAllToCart(names);
     await productsPage.header.expectCartCount(names.length);
@@ -25,7 +25,7 @@ test.describe('Cart', () => {
     expect((await cartPage.getItemNames()).sort()).toEqual([...names].sort());
   });
 
-  test('removing the last product empties the cart', async ({ productsPage, cartPage }) => {
+  test('0012 [CART] Validate removing the last product empties the cart', async ({ productsPage, cartPage }) => {
     await productsPage.addToCart(PRODUCTS.bikeLight.name);
     await cartPage.goto();
 
@@ -35,7 +35,7 @@ test.describe('Cart', () => {
     await cartPage.header.expectCartCount(0);
   });
 
-  test('continue shopping returns to the inventory', async ({ productsPage, cartPage }) => {
+  test('0013 [CART] Validate continue shopping returns to the products page', async ({ productsPage, cartPage }) => {
     await cartPage.goto();
 
     await cartPage.continueShopping();
