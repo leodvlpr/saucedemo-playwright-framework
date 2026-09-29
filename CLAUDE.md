@@ -6,6 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Playwright + TypeScript UI test framework targeting the public demo site https://www.saucedemo.com (set as `baseURL`, so page objects navigate with relative paths like `/inventory.html`). There is no application source here — only tests and the page-object layer that drives that external site.
 
+`README.md` is the human-facing guide and restates some of what follows — the commands,
+the environment variables and the test-id ranges. Update both when any of those change.
+
 ## Commands
 
 ```bash
