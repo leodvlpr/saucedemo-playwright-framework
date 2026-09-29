@@ -8,17 +8,23 @@ Playwright + TypeScript UI test framework targeting the public demo site https:/
 
 ## Commands
 
-`package.json` has no real `test` script yet (it is still the npm placeholder that exits 1). Drive Playwright directly:
+```bash
+npx playwright install   # one-time: download browsers
+npm test                 # all specs, all 3 browser projects
+npm run test:chromium    # single browser (fastest feedback loop)
+npm run test:headed      # headed run
+npm run test:ui          # Playwright UI mode
+npm run report           # open the last HTML report
+npm run typecheck        # tsc --noEmit (no build step; Playwright transpiles specs itself)
+```
+
+Narrowing a run needs Playwright's own flags:
 
 ```bash
-npx playwright install                 # one-time: download browsers
-npx playwright test                    # all specs, all 3 browser projects
-npx playwright test --project=chromium # single browser (fastest feedback loop)
-npx playwright test tests/auth/login.spec.ts          # one file
-npx playwright test -g "locked_out_user"              # one test by title
-npx playwright test --headed --debug   # Playwright Inspector
-npx playwright show-report             # open the last HTML report
-npx tsc --noEmit                       # typecheck (no build step; Playwright transpiles specs itself)
+npx playwright test tests/auth/login.spec.ts   # one file
+npx playwright test -g "0002"                  # one test by id
+npx playwright test -g "\[PRODUCTS\]"          # every test for one component
+npx playwright test --headed --debug           # Playwright Inspector
 ```
 
 There is no linter configured.
@@ -62,13 +68,43 @@ Page Object Model split across two top-level trees.
   - `src/config/env.ts` — the only reader of `process.env`; see Environment above.
   - `src/data/` — `users.data.ts` (env-backed credentials + login error strings), `products.data.ts` (names, prices, sort values), `checkout.data.ts` (customer payloads, expected error/confirmation strings).
   - `src/utils/` — `price.util.ts` (tax/total math, price parsing) and `selectors.util.ts`.
-- `tests/<feature>/*.spec.ts` — specs only, under `auth`, `inventory`, `cart`, `checkout`.
+- `tests/<feature>/*.spec.ts` — specs only, under `auth`, `products`, `cart`, `checkout`.
 
 Key conventions:
 
 - **Specs import `test`/`expect` from `src/fixtures/pages.fixture`, not from `@playwright/test`.** Get authentication with `test.beforeEach(async ({ loggedIn }) => {})`.
 - Assertions live in the page/component objects; specs call `expect*()` methods rather than raw `expect` on locators.
 - Never mix an action and an assertion in the same method — `addToCart()` clicks, `expectInCart()` asserts.
+
+### Test naming
+
+Every test title follows:
+
+```
+XXXX [COMPONENT] Validate <main scenario assertion>
+```
+
+```ts
+test('0007 [PRODUCTS] Validate add to cart button toggles to remove', async ({ productsPage }) => {
+```
+
+- `XXXX` — a zero-padded four-digit id, unique across the whole suite. Ids are
+  **append-only**: a new test takes the next free number, and existing ids are never
+  renumbered or reused, so a failure in CI always refers to the same scenario.
+- `[COMPONENT]` — the area under test, upper-case in square brackets. Current values:
+  `LOGIN`, `PRODUCTS`, `CART`, `CHECKOUT`. The tag matches the `tests/<feature>/` directory
+  and the page object it drives (`PRODUCTS` -> `tests/products/`, `ProductsPage`), not the
+  site's own URL for that page (`/inventory.html`). Add a new one only with a new `tests/<feature>/`
+  directory.
+- The title proper starts with **`Validate`** and then states the assertion the test
+  makes — the expected outcome, not the steps taken. Prefer "Validate missing username
+  is rejected" over "Validate the user types nothing and clicks login".
+
+The prefix makes both selectors below work, which is the point of the scheme:
+`-g "0014"` for one scenario, `-g "\[PRODUCTS\]"` for a component.
+
+Ids in use: `0001`-`0004` LOGIN, `0005`-`0009` PRODUCTS, `0010`-`0013` CART,
+`0014`-`0018` CHECKOUT. Next free id: **`0019`**.
 
 ### Locator strategy
 
