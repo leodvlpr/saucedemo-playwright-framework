@@ -15,8 +15,8 @@
     "url": "git+https://github.com/leodvlpr/saucedemo-playwright-framework.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Leonel Mujica",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/leodvlpr/saucedemo-playwright-framework/issues"
   },
