@@ -46,8 +46,23 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+      - name: TEMPORARY diagnostic — probe the Claude gateway
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
+        run: |
+          test -n "$ANTHROPIC_BASE_URL" && echo "base_url secret is set" || echo "base_url secret is EMPTY"
+          code=$(curl -s -o /tmp/probe.json -w '%{http_code}' --max-time 30 "$ANTHROPIC_BASE_URL/v1/messages" \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "content-type: application/json" \
+            -d '{"model":"claude-opus-5-5","max_tokens":8,"messages":[{"role":"user","content":"ping"}]}') || code="curl_failed"
+          echo "gateway http_status=$code"
+          python3 -c "import json;d=json.load(open('/tmp/probe.json'));e=d.get('error',{});print('  error_type=',e.get('type'));print('  error_message=',e.get('message'))" 2>/dev/null || echo "  (no JSON error object)"
       - name: Claude Code — analyze test failure
         uses: anthropics/claude-code-action@v1
+        env:
+          ANTHROPIC_BASE_URL: ${{ secrets.ANTHROPIC_BASE_URL }}
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
