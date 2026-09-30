@@ -46,6 +46,19 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report/
+      - name: TEMPORARY diagnostic — probe Anthropic API auth
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          for model in claude-opus-5-5 claude-haiku-4-5-20251001; do
+            code=$(curl -s -o /tmp/probe.json -w '%{http_code}' https://api.anthropic.com/v1/messages \
+              -H "x-api-key: $ANTHROPIC_API_KEY" \
+              -H "anthropic-version: 2023-06-01" \
+              -H "content-type: application/json" \
+              -d "{\"model\":\"$model\",\"max_tokens\":8,\"messages\":[{\"role\":\"user\",\"content\":\"ping\"}]}")
+            echo "model=$model http_status=$code"
+            python3 -c "import json;d=json.load(open('/tmp/probe.json'));e=d.get('error',{});print('  error_type=',e.get('type'));print('  error_message=',e.get('message'))" || echo "  (no error object)"
+          done
       - name: Claude Code — analyze test failure
         uses: anthropics/claude-code-action@v1
         with:
