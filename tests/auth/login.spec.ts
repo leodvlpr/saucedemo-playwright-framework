@@ -14,7 +14,7 @@ test.describe('Login', () => {
     await loginPage.goto();
     await loginPage.login(USERS.lockedOut.username, USERS.lockedOut.password);
 
-    await loginPage.expectErrorMessage('Epic sadface: this account is temporarily suspended');
+    await loginPage.expectErrorMessage(LOGIN_ERRORS.lockedOut);
   });
 
   test('0003 [LOGIN] Validate wrong password is rejected', async ({ loginPage }) => {
