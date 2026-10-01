@@ -3,15 +3,20 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium",
+    "report": "playwright show-report",
+    "typecheck": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/leodvlpr/saucedemo-playwright-framework.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Leonel Mujica",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/leodvlpr/saucedemo-playwright-framework/issues"
   },
@@ -20,6 +25,7 @@
   "devDependencies": {
     "@playwright/test": "^1.63.0",
     "@types/node": "^26.6.3",
+    "dotenv": "^18.0.4",
     "typescript": "^7.0.2"
   }
 }
